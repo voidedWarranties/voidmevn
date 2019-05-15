@@ -1,0 +1,19 @@
+{
+  "name": "voidmevn",
+  "version": "1.0.0",
+  "description": "My version of Mongo Express Vue Node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidedWarranties/voidmevn.git"
+  },
+  "author": "voidedWarranties",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/voidedWarranties/voidmevn/issues"
+  },
+  "homepage": "https://github.com/voidedWarranties/voidmevn#readme"
+}
