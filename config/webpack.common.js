@@ -1,6 +1,6 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import FaviconsWebpackPlugin from "favicons-webpack-plugin";
+import VueLoaderPlugin from "vue-loader/lib/plugin";
 
 const clientConfig = {
     entry: "./src/client/index.js",
@@ -18,13 +18,18 @@ const clientConfig = {
                 loader: "eslint-loader"
             },
             {
-                test: /\.(js|vue)$/,
+                test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel-loader"
             },
             {
+                test: /\.vue$/,
+                loader: "vue-loader"
+            },
+            {
                 test: /\.css$/,
                 use: [
+                    "vue-style-loader",
                     "style-loader",
                     "css-loader"
                 ]
@@ -51,9 +56,11 @@ const clientConfig = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./src/client/index.html"
+            template: "./src/client/index.html",
+            favicon: "./config/logo.png",
+            title: "voidmevn"
         }),
-        new FaviconsWebpackPlugin("./config/logo.png")
+        new VueLoaderPlugin()
     ]
 };
 
