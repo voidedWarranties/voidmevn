@@ -1,8 +1,16 @@
 <template>
     <div>
-        <p>Hello World</p>
-        {{ value }}
-        {{ value2 }}
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" name="email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
     </div>
 </template>
 

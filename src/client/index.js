@@ -1,9 +1,13 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import VueRouter from "vue-router";
 
 import App from "./App.vue";
+import Signup from "./Signup.vue";
+import Login from "./Login.vue";
 
 Vue.use(Vuex);
+Vue.use(VueRouter);
 
 const store = new Vuex.Store({
     state: {
@@ -21,8 +25,18 @@ const store = new Vuex.Store({
     }
 });
 
-new Vue({
-    el: "#app",
-    render: h => h(App),
-    store
+const routes = [
+    { path: "/", component: App },
+    { path: "/sign-up", component: Signup },
+    { path: "/log-in", component: Login }
+];
+
+const router = new VueRouter({
+    routes,
+    mode: "history"
 });
+
+const VueApp = new Vue({
+    store,
+    router
+}).$mount("#app");
