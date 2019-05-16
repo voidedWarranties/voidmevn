@@ -7,8 +7,9 @@
 <script>
 export default {
     name: "voidmevn",
-    mounted() {
-        console.log("Mounted");
+    data() {
+        return {
+        };
     }
 };
 </script>

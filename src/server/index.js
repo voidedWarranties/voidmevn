@@ -16,6 +16,10 @@ if(process.env.NODE_ENV === "production") {
     app.use(expressStaticGzip(path.join(__dirname, "../client")));
 }
 
+app.get("/api", (req, res) => {
+    res.json({a: "b"});
+});
+
 app.listen(80, "0.0.0.0", () => {
     console.log("Express Ready");
 });

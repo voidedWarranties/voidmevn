@@ -7,7 +7,9 @@ const options = {
     contentBase: "../dist",
     hot: true,
     host: "localhost",
-    proxy: {},
+    proxy: {
+        "/api": "http://localhost"
+    },
     historyApiFallback: true,
     disableHostCheck: true
 };
