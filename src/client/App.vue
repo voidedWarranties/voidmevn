@@ -1,15 +1,27 @@
 <template>
     <div id="app">
         <p>Hello World</p>
+        {{ value }}
+        {{ value2 }}
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
     name: "voidmevn",
     data() {
         return {
+            value: null,
+            value2: null
         };
+    },
+    mounted() {
+        this.$store.commit("setUser", {
+            user: {a: "b", c: "d"}
+        });
+        axios.get("/api").then(response => (this.value = response.data));
+        this.value2 = this.$store.getters.user;
     }
 };
 </script>
