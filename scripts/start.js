@@ -2,6 +2,8 @@ import webpack from "webpack";
 import webpackDevServer from "webpack-dev-server";
 
 import config from "../config/webpack.dev";
+import fs from "fs";
+import path from "path";
 
 const options = {
     contentBase: "../dist",
@@ -14,7 +16,11 @@ const options = {
         "/logout": "http://localhost"
     },
     historyApiFallback: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    // https: {
+    //     key: fs.readFileSync(path.join(__dirname, "../certs/key.pem")),
+    //     cert: fs.readFileSync(path.join(__dirname, "../certs/cert.pem"))
+    // }
 };
 
 webpackDevServer.addDevServerEntrypoints(config, options);
