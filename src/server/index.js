@@ -10,6 +10,8 @@ import flash from "connect-flash";
 import mongoose from "mongoose";
 import session from "express-session";
 
+import history from "connect-history-api-fallback";
+
 import bodyParser from "body-parser";
 
 const MongoStore = require("connect-mongo")(session);
@@ -36,6 +38,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+if(process.env.NODE_ENV === "production") {
+    app.get("*.js", (req, res, next) => {
+        req.url = `${req.url}.gz`;
+        res.set("Content-Encoding", "gzip");
+        res.set("Content-Type", "text/javascript");
+        next();
+    });
+
+    app.use(express.static(path.join(__dirname, "../client")));
+    app.use(expressStaticGzip(path.join(__dirname, "../client")));
+
+    app.use(history({
+        disableDotRule: true,
+        rewrites: [
+            { from: "/logout", to: "/logout" }
+        ]
+    }));
+
+    app.use(express.static(path.join(__dirname, "../client")));
+    app.use(expressStaticGzip(path.join(__dirname, "../client")));
+}
 
 passport.serializeUser((user, done) => {
     done(null, user.id);
@@ -103,18 +127,6 @@ passport.use("local-login", new LocalStrategy({
         });
     });
 }));
-
-if(process.env.NODE_ENV === "production") {
-    app.get("*.js", (req, res, next) => {
-        req.url = `${req.url}.gz`;
-        res.set("Content-Encoding", "gzip");
-        res.set("Content-Type", "text/javascript");
-        next();
-    });
-
-    app.use(express.static(path.join(__dirname, "../client")));
-    app.use(expressStaticGzip(path.join(__dirname, "../client")));
-}
 
 app.get("/api", (req, res) => {
     res.json(req.user);
