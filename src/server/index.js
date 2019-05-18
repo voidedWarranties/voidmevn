@@ -160,6 +160,22 @@ app.get("/logout", (req, res) => {
     res.redirect("/log-in");
 });
 
+app.post("/changepass", (req, res) => {
+    if(req.user) {
+        User.findOne({ "local.email": req.user.local.email }, (err, user) => {
+            if(err) console.error(err);
+
+            if(user.validPassword(req.body.old)) {
+                user.local.password = user.generateHash(req.body.new);
+                user.save(err => {
+                    if(err) console.error(err);
+                    res.json({ success: true });
+                });
+            }
+        });
+    }
+});
+
 const httpServer = http.createServer(app);
 
 httpServer.listen(80, "0.0.0.0");

@@ -13,7 +13,8 @@ const options = {
         "/api": "http://localhost",
         "/signup": "http://localhost",
         "/login": "http://localhost",
-        "/logout": "http://localhost"
+        "/logout": "http://localhost",
+        "/changepass": "http://localhost"
     },
     historyApiFallback: true,
     disableHostCheck: true,
