@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form action="/login" method="post">
+        <form action="/account/login" method="post">
             <div class="form-group">
                 <label>Email</label>
                 <input type="text" name="email">
@@ -28,7 +28,7 @@ export default {
         this.$store.commit("setUser", {
             user: {a: "b", c: "d"}
         });
-        axios.get("/api").then(response => (this.value = response.data));
+        axios.get("/api/user").then(response => (this.value = response.data));
         this.value2 = this.$store.getters.user;
     }
 };

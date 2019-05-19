@@ -1,24 +1,26 @@
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
-import path from "path";
-
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import User from "./User";
-import flash from "connect-flash";
-
-import mongoose from "mongoose";
 import session from "express-session";
-
+import bodyParser from "body-parser";
+import { redirectToHTTPS } from "express-http-to-https";
 import history from "connect-history-api-fallback";
 
-import fs from "fs";
+import api_route from "./routes/api";
+import account_route from "./routes/account";
+
 import http from "http";
 import https from "https";
 
-import bodyParser from "body-parser";
+import path from "path";
+import fs from "fs";
 
-import { redirectToHTTPS } from "express-http-to-https";
+import passport from "passport";
+
+import mongoose from "mongoose";
+import User from "./User";
+
+import setup from "./passport/setup";
+import strategies from "./passport/strategies";
 
 const MongoStore = require("connect-mongo")(session);
 
@@ -39,7 +41,6 @@ app.use(session({
     store
 }));
 
-app.use(flash());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
@@ -74,107 +75,12 @@ if(process.env.NODE_ENV === "production") {
     app.use(expressStaticGzip(path.join(__dirname, "../client")));
 }
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
+setup(passport);
+strategies(passport);
 
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
-});
+app.use("/api", api_route);
 
-passport.use("local-signup", new LocalStrategy({
-    usernameField: "email",
-    passwordField: "password",
-    passReqToCallback: true
-},
-(req, email, password, done) => {
-    if(email) email = email.toLowerCase();
-    process.nextTick(() => {
-        if(!req.user) {
-            User.findOne({ "local.email": email }, (err, user) => {
-                if(err) return done(err);
-
-                if(user) {
-                    return done(null, false);
-                } else {
-                    let newUser = new User();
-                    newUser.local.email = email;
-                    newUser.local.password = newUser.generateHash(password);
-
-                    newUser.save(err => {
-                        if(err) return done(err);
-
-                        return done(null, newUser);
-                    });
-                }
-            });
-        } else {
-            return done(null, req.user);
-        }
-    });
-}));
-
-passport.use("local-login", new LocalStrategy({
-    usernameField: "email",
-    passwordField: "password",
-    passReqToCallback: true
-},
-(req, email, password, done) => {
-    if(email) email = email.toLowerCase();
-
-    process.nextTick(() => {
-        User.findOne({ "local.email": email }, (err, user) => {
-            if(err) return done(err);
-
-            if(!user) {
-                return done(null, false);
-            }
-
-            if(!user.validPassword(password)) {
-                return done(null, false);
-            } else {
-                return done(null, user);
-            }
-        });
-    });
-}));
-
-app.get("/api", (req, res) => {
-    res.json(req.user);
-});
-
-app.post("/signup", passport.authenticate("local-signup", {
-    successRedirect: "/",
-    failureRedirect: "/sign-up"
-}));
-
-app.post("/login", passport.authenticate("local-login", {
-    successRedirect: "/",
-    failureRedirect: "/log-in"
-}));
-
-app.get("/logout", (req, res) => {
-    req.logout();
-    res.redirect("/log-in");
-});
-
-app.post("/changepass", (req, res) => {
-    if(req.user) {
-        User.findOne({ "local.email": req.user.local.email }, (err, user) => {
-            if(err) console.error(err);
-
-            if(user.validPassword(req.body.old)) {
-                user.local.password = user.generateHash(req.body.new);
-                user.save(err => {
-                    if(err) console.error(err);
-                    res.json({ success: true });
-                });
-            }
-        });
-    }
-});
+app.use("/account", account_route(passport));
 
 const httpServer = http.createServer(app);
 

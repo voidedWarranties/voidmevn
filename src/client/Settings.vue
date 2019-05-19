@@ -74,15 +74,15 @@ export default {
         };
     },
     mounted() {
-        axios.get("/api").then(response => {
-            if(response.data == "") return this.$router.push("/log-in");
+        axios.get("/api/user").then(response => {
+            if(response.data == "") return this.$router.push("/login");
             this.$store.commit("setUser", {
                 user: response.data
             });
         });
         
         if(this.$store.getters.user == null) {
-            this.$router.push("/log-in");
+            this.$router.push("/login");
         }
     },
     methods: {
@@ -99,7 +99,7 @@ export default {
             if(this.current !== this.neww && this.neww === this.new_confirm) {
                 axios({
                     method: "post",
-                    url: "/changepass",
+                    url: "/account/changepass",
                     config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
                     data: `old=${this.current}&new=${this.neww}`
                 }).then(response => {

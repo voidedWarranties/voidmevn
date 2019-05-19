@@ -33,8 +33,8 @@ const store = new Vuex.Store({
 
 const routes = [
     { path: "/", component: App },
-    { path: "/sign-up", component: Signup },
-    { path: "/log-in", component: Login },
+    { path: "/signup", component: Signup },
+    { path: "/login", component: Login },
     { path: "/settings", component: Settings }
 ];
 

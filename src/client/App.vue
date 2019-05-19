@@ -20,7 +20,7 @@ export default {
         this.$store.commit("setUser", {
             user: {a: "b", c: "d"}
         });
-        axios.get("/api").then(response => (this.value = response.data));
+        axios.get("/api/user").then(response => (this.value = response.data));
         this.value2 = this.$store.getters.user;
     }
 };
