@@ -55,6 +55,14 @@
                 </form>
             </md-app-content>
         </md-app>
+
+        <form @submit.prevent="enable2fa">
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" name="password" v-model="fapassword">
+            </div>
+            <button type="submit">Login</button>
+        </form>
     </div>
 </template>
 
@@ -71,6 +79,7 @@ export default {
             current: null,
             neww: null,
             new_confirm: null,
+            fapassword: null
         };
     },
     mounted() {
@@ -107,6 +116,20 @@ export default {
                 this.current = null;
                 this.neww = null;
                 this.new_confirm = null;
+            }
+        },
+        enable2fa() {
+            if(this.fapassword) {
+                axios({
+                    method: "post",
+                    url: "/account/register_twofactor",
+                    config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
+                    data: `password=${this.fapassword}`
+                }).then(response => {
+                    var img = document.createElement("img");
+                    img.src = response.data.qr;
+                    document.body.appendChild(img);
+                });
             }
         }
     },

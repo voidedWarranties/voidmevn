@@ -1,13 +1,29 @@
 <template>
     <div>
-        <form action="/account/login" method="post">
+        <form @submit.prevent="login" v-if="!twofactor">
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" name="email">
+                <input type="text" name="email" v-model="email">
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password">
+                <input type="password" name="password" v-model="password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <form action="/account/twofactor" method="post" v-if="twofactor">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" name="email" v-model="email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" v-model="password">
+            </div>
+            <div class="form-group">
+                <label>Code</label>
+                <input type="text" name="code">
             </div>
             <button type="submit">Login</button>
         </form>
@@ -20,8 +36,11 @@ export default {
     name: "voidmevn",
     data() {
         return {
-            value: null,
-            value2: null
+            email: null,
+            password: null,
+            twofactor: false,
+            user: null,
+            code: null
         };
     },
     mounted() {
@@ -29,7 +48,36 @@ export default {
             user: {a: "b", c: "d"}
         });
         axios.get("/api/user").then(response => (this.value = response.data));
-        this.value2 = this.$store.getters.user;
+    },
+    methods: {
+        login() {
+            axios({
+                method: "post",
+                url: "/account/login",
+                config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
+                data: `email=${this.email}&password=${this.password}`
+            }).then(response => {
+                if(response.data.twofactor) {
+                    this.user = response.data.user;
+                    this.twofactor = true;
+                } else {
+                    this.$router.push("/");
+                }
+            });
+        },
+        twofactorr() {
+            const suser = JSON.stringify(this.user);
+            axios({
+                method: "post",
+                url: "/account/twofactor",
+                config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
+                data: `user=${suser}&code=${this.code}`
+            }).then(response => {
+                if(response.data.success) {
+                    this.$router.push("/");
+                }
+            });
+        }
     }
 };
 </script>
