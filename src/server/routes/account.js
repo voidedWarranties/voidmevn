@@ -70,12 +70,14 @@ export default passport => {
         if(verified) {
             passport.authenticate("local-login", (err, user, info) => {
                 if(err) return next(err);
-                if(!user) return res.redirect("/login");
+                if(!user) return res.json({ success: false });
                 req.logIn(user, err => {
                     if(err) return next(err);
-                    res.redirect("/");
+                    res.json({ success: true });
                 });
             })(req, res, next);
+        } else {
+            res.json({ success: false });
         }
     });
 

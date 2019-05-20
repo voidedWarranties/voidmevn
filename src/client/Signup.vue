@@ -1,16 +1,23 @@
 <template>
     <div>
-        <form action="/account/signup" method="post">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="text" name="email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password">
-            </div>
-            <button type="submit">Signup</button>
-        </form>
+        <md-app>
+            <md-app-toolbar class="md-primary">
+                <span class="md-title">Signup</span>
+            </md-app-toolbar>
+            <md-app-content>
+                <form action="/account/signup" method="post">
+                    <md-field>
+                        <label for="email">Email</label>
+                        <md-input type="text" name="email" v-model="email" />
+                    </md-field>
+                    <md-field>
+                        <label for="password">Password</label>
+                        <md-input type="password" name="password" v-model="password" />
+                    </md-field>
+                    <md-button type="submit" class="md-primary">Signup</md-button>
+                </form>
+            </md-app-content>
+        </md-app>
     </div>
 </template>
 

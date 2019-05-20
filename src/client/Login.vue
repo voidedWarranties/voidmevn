@@ -1,32 +1,39 @@
 <template>
     <div>
-        <form @submit.prevent="login" v-if="!twofactor">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="text" name="email" v-model="email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" v-model="password">
-            </div>
-            <button type="submit">Login</button>
-        </form>
+        <md-app>
+            <md-app-toolbar class="md-primary">
+                <span class="md-title">Login</span>
+            </md-app-toolbar>
+            <md-app-content>
+                <form @submit.prevent="login" v-if="!twofactor">
+                    <md-field>
+                        <label for="email">Email</label>
+                        <md-input type="text" name="email" v-model="email" />
+                    </md-field>
+                    <md-field>
+                        <label for="password">Password</label>
+                        <md-input type="password" name="password" v-model="password" />
+                    </md-field>
+                    <md-button type="submit" class="md-primary">Login</md-button>
+                </form>
 
-        <form action="/account/twofactor" method="post" v-if="twofactor">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="text" name="email" v-model="email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" v-model="password">
-            </div>
-            <div class="form-group">
-                <label>Code</label>
-                <input type="text" name="code">
-            </div>
-            <button type="submit">Login</button>
-        </form>
+                <form @submit.prevent="twofactorr" v-if="twofactor">
+                    <md-field>
+                        <label for="email">Email</label>
+                        <md-input type="text" name="email" v-model="email" />
+                    </md-field>
+                    <md-field>
+                        <label for="password">Password</label>
+                        <md-input type="password" name="password" v-model="password" />
+                    </md-field>
+                    <md-field>
+                        <label for="code">Code</label>
+                        <md-input autofocus type="text" name="code" v-model="code" />
+                    </md-field>
+                    <md-button type="submit" class="md-primary">Login</md-button>
+                </form>
+            </md-app-content>
+        </md-app>
     </div>
 </template>
 
@@ -71,10 +78,12 @@ export default {
                 method: "post",
                 url: "/account/twofactor",
                 config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
-                data: `user=${suser}&code=${this.code}`
+                data: `email=${this.email}&password=${this.password}&code=${this.code}`
             }).then(response => {
                 if(response.data.success) {
                     this.$router.push("/");
+                } else {
+                    this.code = null;
                 }
             });
         }
