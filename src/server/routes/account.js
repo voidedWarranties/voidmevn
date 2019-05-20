@@ -112,5 +112,23 @@ export default passport => {
         }
     });
 
+    router.post("/disable_twofactor", (req, res) => {
+        if(req.user) {
+            User.findOne({ "local.email": req.user.local.email }, (err, user) => {
+                if(err) console.error(err);
+
+                if(user.validPassword(req.body.password)) {
+                    user.twofactor.enabled = false;
+                    user.twofactor.key = null;
+                    user.save(err => {
+                        if(err) console.error(err);
+                        
+                        res.json({ success: true });
+                    });
+                }
+            });
+        }
+    });
+
     return router;
 };

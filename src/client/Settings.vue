@@ -53,16 +53,36 @@
                         </md-card-actions>
                     </md-card>
                 </form>
+
+                <form class="md-layout" @submit.prevent="handle2fa">
+                    <md-card class="md-layout-item md-size-50 md-small-size-100">
+                        <md-card-header>
+                            <div class="md-title">{{ this.$store.getters.user.twofactor.enabled ? "Disable" : "Enable" }} 2FA</div>
+                        </md-card-header>
+                        <md-card-content>
+                            <md-field>
+                                <label for="password">Password</label>
+                                <md-input type="password" v-model="fapassword" name="password" />
+                            </md-field>
+                        </md-card-content>
+                        <md-card-actions>
+                            <md-button type="submit" class="md-primary">{{ this.$store.getters.user.twofactor.enabled ? "Disable" : "Enable" }}</md-button>
+                        </md-card-actions>
+                    </md-card>
+                </form>
+
+                <md-dialog :md-active.sync="fadialog">
+                    <md-dialog-title>Your 2FA information</md-dialog-title>
+                    <md-dialog-content>
+                        <span><i>Note: This information will not be visible after you close this dialog/tab.</i></span>
+                        <span><img :src="faqr" /> {{ fasecret }}</span>
+                    </md-dialog-content>
+                    <md-dialog-actions>
+                        <md-button class="md-primary" @click="fadialog = false">Ok</md-button>
+                    </md-dialog-actions>
+                </md-dialog>
             </md-app-content>
         </md-app>
-
-        <form @submit.prevent="enable2fa">
-            <div class="form-group">
-                <label>Password</label>
-                <input type="text" name="password" v-model="fapassword">
-            </div>
-            <button type="submit">Login</button>
-        </form>
     </div>
 </template>
 
@@ -79,7 +99,10 @@ export default {
             current: null,
             neww: null,
             new_confirm: null,
-            fapassword: null
+            fapassword: null,
+            fadialog: false,
+            fasecret: null,
+            faqr: null
         };
     },
     mounted() {
@@ -118,18 +141,43 @@ export default {
                 this.new_confirm = null;
             }
         },
-        enable2fa() {
+        handle2fa() {
             if(this.fapassword) {
-                axios({
-                    method: "post",
-                    url: "/account/register_twofactor",
-                    config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
-                    data: `password=${this.fapassword}`
-                }).then(response => {
-                    var img = document.createElement("img");
-                    img.src = response.data.qr;
-                    document.body.appendChild(img);
-                });
+                if(this.$store.getters.user.twofactor.enabled) {
+                    axios({
+                        method: "post",
+                        url: "/account/disable_twofactor",
+                        config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
+                        data: `password=${this.fapassword}`
+                    }).then(response => {
+                        if(response.data.success) {
+                            axios.get("/api/user").then(response => {
+                                if(response.data == "") return this.$router.push("/login");
+                                this.$store.commit("setUser", {
+                                    user: response.data
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    axios({
+                        method: "post",
+                        url: "/account/register_twofactor",
+                        config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
+                        data: `password=${this.fapassword}`
+                    }).then(response => {
+                        this.fasecret = response.data.key;
+                        this.faqr = response.data.qr;
+                        this.fadialog = true;
+
+                        axios.get("/api/user").then(response => {
+                            if(response.data == "") return this.$router.push("/login");
+                            this.$store.commit("setUser", {
+                                user: response.data
+                            });
+                        });
+                    });
+                }
             }
         }
     },

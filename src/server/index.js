@@ -17,7 +17,6 @@ import fs from "fs";
 import passport from "passport";
 
 import mongoose from "mongoose";
-import User from "./User";
 
 import setup from "./passport/setup";
 import strategies from "./passport/strategies";

@@ -21,6 +21,7 @@ export default passport => {
                         let newUser = new User();
                         newUser.local.email = email;
                         newUser.local.password = newUser.generateHash(password);
+                        newUser.twofactor.enabled = false;
     
                         newUser.save(err => {
                             if(err) return done(err);
