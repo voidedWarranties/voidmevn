@@ -66,7 +66,7 @@ if(process.env.NODE_ENV === "production") {
     app.use(history({
         disableDotRule: true,
         rewrites: [
-            { from: "/logout", to: "/logout" }
+            { from: "/account/logout", to: "/account/logout" }
         ]
     }));
 

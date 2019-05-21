@@ -64,7 +64,7 @@ export default {
                 config: { headers: {"Content-Type": "application/X-www-form-urlencoded"} },
                 data: `email=${this.email}&password=${this.password}`
             }).then(response => {
-                if(response.data.twofactor.enabled) {
+                if(response.data.user.twofactor.enabled) {
                     this.user = response.data.user;
                     this.twofactor = true;
                 } else {

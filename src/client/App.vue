@@ -3,6 +3,7 @@
         <p>Hello World</p>
         {{ value }}
         {{ value2 }}
+        <a href="/account/logout">Logout</a>
     </div>
 </template>
 

@@ -58,27 +58,28 @@ export default passport => {
         }
     });
 
-    router.post("/twofactor", async (req, res, next) => {
+    router.post("/twofactor", (req, res, next) => {
         const token = req.body.code;
         const decipher = crypto.createDecipher("aes-256-ctr", encPass);
-        var user = await User.findOne({ "local.email": req.body.email });
-        var secret = decipher.update(user.twofactor.key, "hex", "utf8");
-        secret += decipher.final("utf8");
+        User.findOne({ "local.email": req.body.email }).then(user => {
+            var secret = decipher.update(user.twofactor.key, "hex", "utf8");
+            secret += decipher.final("utf8");
 
-        const verified = speakeasy.totp.verify({ secret, encoding: "base32", token });
+            const verified = speakeasy.totp.verify({ secret, encoding: "base32", token });
 
-        if(verified) {
-            passport.authenticate("local-login", (err, user, info) => {
-                if(err) return next(err);
-                if(!user) return res.json({ success: false });
-                req.logIn(user, err => {
+            if(verified) {
+                passport.authenticate("local-login", (err, user, info) => {
                     if(err) return next(err);
-                    res.json({ success: true });
-                });
-            })(req, res, next);
-        } else {
-            res.json({ success: false });
-        }
+                    if(!user) return res.json({ success: false });
+                    req.logIn(user, err => {
+                        if(err) return next(err);
+                        res.json({ success: true });
+                    });
+                })(req, res, next);
+            } else {
+                res.json({ success: false });
+            }
+        });
     });
 
     router.post("/register_twofactor", (req, res) => {
