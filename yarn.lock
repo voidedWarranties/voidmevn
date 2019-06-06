@@ -6414,6 +6414,11 @@ vue-eslint-parser@^5.0.0:
     esquery "^1.0.1"
     lodash "^4.17.11"
 
+vue-flip@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/vue-flip/-/vue-flip-0.3.0.tgz#9af1b2b2d773d09273f93c9dbdd7cc4409d207e3"
+  integrity sha512-eIesatwHb29RsqZjuVbS07ApnRV+csfqM8nr1kKW5NPJ1E4iAJZR06Xq7Gx9fNYYLw1WGOZhZ6KiMA3mVJfrqg==
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.3.tgz#2756f46cb3258054c5f4723de8ae7e87302a1ccf"

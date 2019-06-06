@@ -30,7 +30,7 @@ export default passport => {
                 req.logIn(user, err => {
                     if(err) return next(err);
                     res.json({
-                        twofactor: true
+                        twofactor: false
                     });
                 });
             }
